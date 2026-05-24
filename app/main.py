@@ -35,7 +35,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.secret_key = ''
+app.secret_key = 'unip123'
 with app.app_context():
     db.create_all()
 
