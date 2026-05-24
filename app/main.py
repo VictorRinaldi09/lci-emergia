@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session,flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+import os
 import logging
 from datetime import datetime
 
@@ -15,37 +16,26 @@ logging.basicConfig(
 )
 
 # CONFIGURAÇÃO DO BANCO
-import os
-
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-import os
-
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 if DATABASE_URL:
-    # Garante o driver PyMySQL se a string começar com mysql://
     if DATABASE_URL.startswith("mysql://"):
         DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
-        
-    # Remove qualquer parâmetro antigo de query string
     if "?" in DATABASE_URL:
         DATABASE_URL = DATABASE_URL.split("?")[0]
         
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
-    
-    # Passa o SSL via dicionário nativo do PyMySQL
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-        "connect_args": {
-            "ssl": {
-                "ssl_mode": "REQUIRED"
-            }
-        }
+        "connect_args": {"ssl": {"ssl_mode": "REQUIRED"}}
     }
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost/calculadora_emergia'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+app.secret_key = ''
 
 # DEFINIÇÃO DA TABELA (Precisa estar aqui para o criar_admin.py funcionar)
 class Usuario(db.Model):
