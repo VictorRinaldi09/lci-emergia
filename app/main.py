@@ -19,19 +19,29 @@ import os
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
+import os
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+
 if DATABASE_URL:
-    # Remove espaços em branco indesejados
-    DATABASE_URL = DATABASE_URL.strip()
-    
-    # Força o uso do PyMySQL se a string começar com o padrão mysql://
+    # Garante o driver PyMySQL se a string começar com mysql://
     if DATABASE_URL.startswith("mysql://"):
         DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
         
-    # Corrige qualquer variação de hífen/underline no parâmetro ssl
-    if "ssl-mode" in DATABASE_URL:
-        DATABASE_URL = DATABASE_URL.replace("ssl-mode", "ssl_mode")
+    # Remove qualquer parâmetro antigo de query string
+    if "?" in DATABASE_URL:
+        DATABASE_URL = DATABASE_URL.split("?")[0]
         
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+    
+    # Passa o SSL via dicionário nativo do PyMySQL
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        "connect_args": {
+            "ssl": {
+                "ssl_mode": "REQUIRED"
+            }
+        }
+    }
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost/calculadora_emergia'
 
