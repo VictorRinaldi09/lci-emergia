@@ -36,6 +36,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 app.secret_key = ''
+with app.app_context():
+    db.create_all()
 
 # DEFINIÇÃO DA TABELA (Precisa estar aqui para o criar_admin.py funcionar)
 class Usuario(db.Model):
