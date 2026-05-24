@@ -1,0 +1,160 @@
+/* Configurações Gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333333;
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+}
+
+/* Barra de Navegação */
+.navbar {
+    background-color: #1e293b;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.navbar-logo {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.navbar-logo span {
+    color: #38bdf8;
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 15px;
+}
+
+.navbar-item {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.navbar-item:hover {
+    color: #ffffff;
+    background-color: #334155;
+}
+
+.navbar-btn {
+    background-color: #0284c7;
+    color: #ffffff !important;
+}
+
+.navbar-btn:hover {
+    background-color: #0369a1 !important;
+}
+
+/* Hero Section (Banner de Boas-Vindas) */
+.hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    padding: 140px 20px 80px 20px;
+    text-align: center;
+}
+
+.hero-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    margin-bottom: 30px;
+}
+
+/* Container de Seções do Conteúdo */
+.content-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Cartões de Seção */
+.section-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+    border-top: 5px solid #e2e8f0;
+}
+
+.section-card[id="emergia"] { border-top-color: #38bdf8; }
+.section-card[id="emergia_2"] { border-top-color: #f59e0b; }
+.section-card[id="historia"] { border-top-color: #613e01; }
+.section-card[id="comparativo"] { border-top-color: #ff3939; }
+.section-card[id="ambiental"] { border-top-color: #10b981; }
+
+.section-card h2 {
+    font-size: 1.8rem;
+    color: #1e293b;
+    margin-top: 0;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-card p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #475569;
+    margin-bottom: 15px;
+}
+
+/* Espaços reservados para preenchimento de texto posterior */
+.text-placeholder {
+    background-color: #f1f5f9;
+    border-left: 4px dashed #cbd5e1;
+    padding: 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+}
+
+.placeholder-title {
+    font-weight: bold;
+    color: #64748b;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+}
+
+/* Rodapé */
+.footer {
+    background-color: #0f172a;
+    color: #64748b;
+    text-align: center;
+    padding: 30px 20px;
+    margin-top: 60px;
+    font-size: 0.9rem;
+}

@@ -1,0 +1,21 @@
+# Ambientes Virtuais (Essencial ignorar!)
+venv/
+.venv/
+env/
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Configurações de editores de código
+.vscode/
+.idea/
+
+# Arquivos do sistema operacional
+Thumbs.db
+desktop.ini
+
+# Logs (Não envie seus logs de auditoria locais!)
+*.log

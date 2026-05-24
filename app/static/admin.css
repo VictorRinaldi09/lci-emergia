@@ -1,0 +1,105 @@
+/* Configurações Gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    color: #333;
+}
+
+/* Barra Superior (Header) */
+.admin-header {
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border-bottom: 2px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.admin-header .user-info {
+    font-size: 1rem;
+}
+
+.admin-header a {
+    text-decoration: none;
+    margin-left: 15px;
+    font-weight: 600;
+    color: #007bff;
+}
+
+.admin-header .btn-sair {
+    color: #dc3545 !important;
+}
+
+/* Container Principal */
+.main-content {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.card-painel {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    padding: 30px;
+    overflow-x: auto; /* Permite scroll se a tabela for muito larga */
+}
+
+h2 {
+    color: #2c3e50;
+    margin-top: 0;
+}
+
+/* Estilização da Tabela */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    min-width: 600px;
+}
+
+.user-table th {
+    background-color: #343a40;
+    color: #ffffff;
+    padding: 15px;
+    text-align: left;
+    font-weight: 500;
+}
+
+.user-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.user-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Badges de Perfil */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+}
+
+.badge-admin { background-color: #dc3545; }
+.badge-user { background-color: #28a745; }
+
+/* Botões */
+.btn-edit {
+    background-color: #ffc107;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-edit:hover { background-color: #e0a800; }

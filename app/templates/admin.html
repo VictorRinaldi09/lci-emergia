@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <title>Admin - Gestão de Segurança</title>
+</head>
+<body>
+
+    <header class="admin-header">
+        <div class="user-info">
+            Painel de Controle | Olá, <strong>{{ session['nome_usuario'] }}</strong> 👤
+        </div>
+        <nav>
+            <a href="/calculadora">Calculadora</a>
+            <a href="/logout" class="btn-sair">Sair</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="card-painel">
+            <h2>Gestão de Usuários e Segurança</h2>
+            <p>Controle de identidades digitais e níveis de acesso (RBAC) para o sistema LCI-Emergia.</p>
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Perfil</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td>#{{ u.id }}</td>
+                        <td>{{ u.nome }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            <span class="badge {% if u.perfil == 'admin' %}badge-admin{% else %}badge-user{% endif %}">
+                                {{ u.perfil.upper() }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-edit">Editar</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>

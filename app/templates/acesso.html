@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LCI-Emergia - Autenticação</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <a href="/" class="btn-voltar-home">← Voltar para o Início</a>
+
+    <div class="container-master" id="container-master">
+        
+        <div class="form-container sign-up-container">
+            <form method="POST" action="/cadastro">
+                <h2>Criar Conta</h2>
+                <span class="subtitle">Cadastre-se para realizar simulações</span>
+                
+                <div class="form-field">
+                    <input type="text" name="nome" placeholder="Nome Completo" required>
+                </div>
+                <div class="form-field">
+                    <input type="email" name="email" placeholder="Endereço de E-mail" required>
+                </div>
+                <div class="form-field">
+                    <input type="password" name="password" placeholder="Crie uma Senha" required>
+                </div>
+                <button type="submit" class="btn-acao btn-azul">Finalizar Cadastro</button>
+            </form>
+        </div>
+
+        <div class="form-container sign-in-container">
+            <form method="POST" action="/login">
+                <h2>Acesso ao Sistema</h2>
+                
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for msg in messages %}
+                            <div class="alert-message">{{ msg }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="form-field">
+                    <input type="email" name="email" placeholder="Seu E-mail" required>
+                </div>
+                <div class="form-field">
+                    <input type="password" name="password" placeholder="Sua Senha" required>
+                </div>
+                <button type="submit" class="btn-acao btn-verde">Entrar</button>
+            </form>
+        </div>
+
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Bem-vindo de Volta!</h1>
+                    <p>Para manter-se conectado, faça login com suas credenciais.</p>
+                    <button class="ghost" id="signIn">Entrar</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Olá, Operador!</h1>
+                    <p>Insira seus dados pessoais e comece sua análise energética.</p>
+                    <button class="ghost" id="signUp">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const containerMaster = document.getElementById('container-master');
+
+        signUpButton.addEventListener('click', () => {
+            containerMaster.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            containerMaster.classList.remove("right-panel-active");
+        });
+
+        // Caso o Flask retorne erro de cadastro, já inicia com a animação para a esquerda ativa
+        {% if tipo_erro == 'cadastro' %}
+            containerMaster.classList.add("right-panel-active");
+        {% endif %}
+    </script>
+</body>
+</html>

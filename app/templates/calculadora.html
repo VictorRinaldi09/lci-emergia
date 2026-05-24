@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LCI-Emergia - Calculadora Comparativa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='calculadora.css') }}">
+</head>
+<body>
+
+    <div class="nav-bar">
+        <span>Sistema LCI-Emergia | Operador: <strong>{{ session['nome_usuario'] }}</strong></span>
+        <div>
+            {% if session['perfil'] == 'admin' %}
+                <a href="/admin">Painel Administrativo</a>
+            {% endif %}
+            <a href="/logout" style="color: #dc3545;">Sair</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Análise Comparativa Energética</h2>
+        <p>Insira a massa dos componentes e o consumo elétrico estimado para simular o impacto ambiental em Joules de Emergia (sej).</p>
+
+        <form method="POST" action="/calculadora">
+            <div class="grid-inputs">
+                <div class="card">
+                    <h3 style="color: #28a745;">🚲 Bicicleta Elétrica</h3>
+                    <div class="form-group">
+                        <label>Massa da Bateria (Íon-Lítio) em kg:</label>
+                        <input type="number" step="0.01" name="bike_bateria" placeholder="Ex: 3.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Massa do Motor (Cobre) em kg:</label>
+                        <input type="number" step="0.01" name="bike_motor" placeholder="Ex: 4.0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Consumo de Energia por Recarga (Joules):</label>
+                        <input type="number" step="1" name="bike_energia" placeholder="Ex: 1800000" required>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: #dc3545;">🏍️ Motocicleta Elétrica</h3>
+                    <div class="form-group">
+                        <label>Massa da Bateria (Íon-Lítio) em kg:</label>
+                        <input type="number" step="0.01" name="moto_bateria" placeholder="Ex: 35.0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Massa do Motor (Cobre) em kg:</label>
+                        <input type="number" step="0.01" name="moto_motor" placeholder="Ex: 12.0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Consumo de Energia por Recarga (Joules):</label>
+                        <input type="number" step="1" name="moto_energia" placeholder="Ex: 14400000" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-calc">Calcular Impacto de Ciclo de Vida (LCI)</button>
+        </form>
+
+        {% if resultados %}
+        <div class="card result-card">
+            <h3>📊 Resultado da Análise Científica</h3>
+            <p>O modelo aponta que a <strong>{{ resultados['vantagem'] }}</strong> apresenta menor dispêndio de recursos ecológicos globais.</p>
+            <p>A motocicleta elétrica consome aproximadamente <strong>{{ resultados['proporcao'] }}x</strong> mais emergia do que a bicicleta elétrica no escopo analisado.</p>
+            
+            <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Detalhamento Bike Elétrica:</h4>
+                    <p>Emergia Bateria: <span class="scientific">{{ resultados['bike']['bateria'] }} sej</span></p>
+                    <p>Emergia Motor: <span class="scientific">{{ resultados['bike']['motor'] }} sej</span></p>
+                    <p>Emergia Consumo: <span class="scientific">{{ resultados['bike']['energia'] }} sej</span></p>
+                    <p><strong>Total: <span class="scientific" style="color:#28a745;">{{ resultados['bike']['total'] }} sej</span></strong></p>
+                </div>
+                <div>
+                    <h4>Detalhamento Moto Elétrica:</h4>
+                    <p>Emergia Bateria: <span class="scientific">{{ resultados['moto']['bateria'] }} sej</span></p>
+                    <p>Emergia Motor: <span class="scientific">{{ resultados['moto']['motor'] }} sej</span></p>
+                    <p>Emergia Consumo: <span class="scientific">{{ resultados['moto']['energia'] }} sej</span></p>
+                    <p><strong>Total: <span class="scientific" style="color:#dc3545;">{{ resultados['moto']['total'] }} sej</span></strong></p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
