@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session,flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 import os
@@ -7,7 +7,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-#Configuração do arquivo de log
+# Configuração do arquivo de log
 logging.basicConfig(
     filename='auditoria.log',
     level=logging.INFO,
@@ -32,13 +32,12 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost/calculadora_emergia'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'unip123_seguranca_aps'
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.secret_key = 'unip123'
 
-
-# DEFINIÇÃO DA TABELA (Precisa estar aqui para o criar_admin.py funcionar)
+# DEFINIÇÃO DAS TABELAS (Modelos lidos primeiro)
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
     id = db.Column(db.Integer, primary_key=True)
@@ -62,15 +61,22 @@ class LogAcesso(db.Model):
     evento = db.Column(db.String(255), nullable=False)
     status = db.Column(db.String(50), nullable=False)
 
-app.config['SECRET_KEY'] = 'uma_chave_aleatoria'
+# CRIAÇÃO AUTOMÁTICA DE TABELAS E DADOS INICIAIS
+with app.app_context():
+    db.create_all()
+    if not FatorEmergia.query.first():
+        fatores_iniciais = [
+            FatorEmergia(material_energia="Bateria de Íon-Lítio", transformidade=1.75e13, unidade="sej/g"),
+            FatorEmergia(material_energia="Cobre (Motor)", transformidade=7.30e12, unidade="sej/g"),
+            FatorEmergia(material_energia="Eletricidade (Rede)", transformidade=1.60e5, unidade="sej/J")
+        ]
+        db.session.bulk_save_objects(fatores_iniciais)
+        db.session.commit()
 
-#NOVAS ROTAS
-
+# ROTAS DO SISTEMA
 @app.route('/')
 def home():
-    #Página pública que explica sobre emergia
     return render_template('home.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
@@ -101,7 +107,6 @@ def cadastro():
     usuario_existente = Usuario.query.filter_by(email=email).first()
     if usuario_existente:
         flash('Este endereço de e-mail já está registrado!')
-        # Devolve para a mesma página sinalizando que o erro foi na aba de cadastro
         return render_template('acesso.html', tipo_erro='cadastro')
 
     hash_senha = bcrypt.generate_password_hash(senha).decode('utf-8')
@@ -114,44 +119,36 @@ def cadastro():
     flash('Conta criada com sucesso! Faça login.')
     return redirect(url_for('login_page'))
 
-
 @app.route('/calculadora', methods=['GET', 'POST'])
 def calculadora():
-    #Verifica se o usuario esta logado antes de mostrar a calculadora
     if 'usuario_id' not in session:
         return redirect(url_for('login_page'))
 
     resultados = None
 
     if request.method == 'POST':
-        # Coleta de dados - Bicicleta Elétrica
         bike_bateria = float(request.form.get('bike_bateria') or 0)
         bike_motor = float(request.form.get('bike_motor') or 0)
         bike_energia = float(request.form.get('bike_energia') or 0)
 
-        # Coleta de dados - Motocicleta Elétrica
         moto_bateria = float(request.form.get('moto_bateria') or 0)
         moto_motor = float(request.form.get('moto_motor') or 0)
         moto_energia = float(request.form.get('moto_energia') or 0)
 
-        # Busca os fatores científicos diretamente do MySQL
         f_bateria = FatorEmergia.query.filter_by(material_energia="Bateria de Íon-Lítio").first().transformidade
         f_motor = FatorEmergia.query.filter_by(material_energia="Cobre (Motor)").first().transformidade
         f_energia = FatorEmergia.query.filter_by(material_energia="Eletricidade (Rede)").first().transformidade
 
-        # Cálculos de Emergia - Bike (Convertendo massa para gramas se inserido em kg)
         emergia_bike_bat = (bike_bateria * 1000) * f_bateria
         emergia_bike_mot = (bike_motor * 1000) * f_motor
         emergia_bike_eng = bike_energia * f_energia
         total_bike = emergia_bike_bat + emergia_bike_mot + emergia_bike_eng
 
-        # Cálculos de Emergia - Moto
         emergia_moto_bat = (moto_bateria * 1000) * f_bateria
         emergia_moto_mot = (moto_motor * 1000) * f_motor
         emergia_moto_eng = moto_energia * f_energia
         total_moto = emergia_moto_bat + emergia_moto_mot + emergia_moto_eng
 
-        # Organiza os resultados em formato científico/legível
         resultados = {
             'bike': {
                 'bateria': f"{emergia_bike_bat:.2e}",
@@ -171,15 +168,11 @@ def calculadora():
 
     return render_template('calculadora.html', resultados=resultados)
 
-
-
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('home'))
 
-
-@app.route('/admin')
 @app.route('/admin')
 def painel_admin():
     if 'usuario_id' not in session or session.get('perfil') != 'admin':
@@ -190,23 +183,6 @@ def painel_admin():
 
     usuarios = Usuario.query.all()
     return render_template('admin.html', usuarios=usuarios)
-
-
-# Bloco de criação e população inserido no local correto:
-with app.app_context():
-    db.create_all()
     
-    # Se a tabela de fatores estiver vazia, insere os dados para a calculadora funcionar
-    if not FatorEmergia.query.first():
-        fatores_iniciais = [
-            FatorEmergia(material_energia="Bateria de Íon-Lítio", transformidade=1.75e13, unidade="sej/g"),
-            FatorEmergia(material_energia="Cobre (Motor)", transformidade=7.30e12, unidade="sej/g"),
-            FatorEmergia(material_energia="Eletricidade (Rede)", transformidade=1.60e5, unidade="sej/J")
-        ]
-        db.session.bulk_save_objects(fatores_iniciais)
-        db.session.commit()
-        print("Banco de dados inicializado e fatores populados!")
-
-
 if __name__ == '__main__':
-    app.run(debug=True) #APOS FINALIZAÇÃO DO PROJETO MUDE O DEBUG PARA False ##############
+    app.run(debug=True)
