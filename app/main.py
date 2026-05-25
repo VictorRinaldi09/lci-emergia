@@ -74,6 +74,11 @@ with app.app_context():
         db.session.bulk_save_objects(fatores_iniciais)
         db.session.commit()
 
+user_para_promover = Usuario.query.filter_by(email='admin@emergia.com').first()
+    if user_para_promover and user_para_promover.perfil != 'admin':
+        user_para_promover.perfil = 'admin'
+        db.session.commit()
+
 # ROTAS DO SISTEMA
 @app.route('/')
 def home():
