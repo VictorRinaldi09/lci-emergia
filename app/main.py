@@ -36,8 +36,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 app.secret_key = 'unip123'
-with app.app_context():
-    db.create_all()
+
 
 # DEFINIÇÃO DA TABELA (Precisa estar aqui para o criar_admin.py funcionar)
 class Usuario(db.Model):
@@ -181,22 +180,33 @@ def logout():
 
 
 @app.route('/admin')
+@app.route('/admin')
 def painel_admin():
-    #So entra se estiver logado e for admin
     if 'usuario_id' not in session or session.get('perfil') != 'admin':
-        #LOG DE VIOLAÇÃO DE ACESSO
         user_tentativa = session.get('nome_usuario', 'Anônimo')
         logging.error(f'ACESSO NEGADO: Usuário "{user_tentativa}" tentou entrar no /admin sem permissão.')
-        
         flash('Acesso restrito para administradores!')
         return redirect(url_for('login_page'))
 
-    #Busca todos os utilizadores para listar na tabela
     usuarios = Usuario.query.all()
     return render_template('admin.html', usuarios=usuarios)
-    
-    #return "<h1>Painel do Administrador</h1><a href='/calculadora'>Voltar</a>"
 
+
+# Bloco de criação e população inserido no local correto:
+with app.app_context():
+    db.create_all()
     
+    # Se a tabela de fatores estiver vazia, insere os dados para a calculadora funcionar
+    if not FatorEmergia.query.first():
+        fatores_iniciais = [
+            FatorEmergia(material_energia="Bateria de Íon-Lítio", transformidade=1.75e13, unidade="sej/g"),
+            FatorEmergia(material_energia="Cobre (Motor)", transformidade=7.30e12, unidade="sej/g"),
+            FatorEmergia(material_energia="Eletricidade (Rede)", transformidade=1.60e5, unidade="sej/J")
+        ]
+        db.session.bulk_save_objects(fatores_iniciais)
+        db.session.commit()
+        print("Banco de dados inicializado e fatores populados!")
+
+
 if __name__ == '__main__':
     app.run(debug=True) #APOS FINALIZAÇÃO DO PROJETO MUDE O DEBUG PARA False ##############
