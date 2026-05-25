@@ -61,25 +61,11 @@ class LogAcesso(db.Model):
     evento = db.Column(db.String(255), nullable=False)
     status = db.Column(db.String(50), nullable=False)
 
-# CRIAÇÃO AUTOMÁTICA DE TABELAS E DADOS INICIAIS
-with app.app_context():
-    db.create_all()
-    if not FatorEmergia.query.first():
-        fatores_iniciais = [
-            FatorEmergia(material_energia="Bateria de Íon-Lítio", transformidade=1.75e13, unidade="sej/g"),
-            FatorEmergia(material_energia="Cobre (Motor)", transformidade=7.30e12, unidade="sej/g"),
-            FatorEmergia(material_energia="Eletricidade (Rede)", transformidade=1.60e5, unidade="sej/J")
-        ]
-        
-        db.session.bulk_save_objects(fatores_iniciais)
-        db.session.commit()
 
-user_para_promover = Usuario.query.filter_by(email='admin@emergia.com').first()
-    if user_para_promover and user_para_promover.perfil != 'admin':
-        user_para_promover.perfil = 'admin'
-        db.session.commit()
-
+# ==========================================
 # ROTAS DO SISTEMA
+# ==========================================
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -189,6 +175,36 @@ def painel_admin():
 
     usuarios = Usuario.query.all()
     return render_template('admin.html', usuarios=usuarios)
-    
+
+
+# ==========================================
+# CRIAÇÃO AUTOMÁTICA DE TABELAS E DADOS INICIAIS
+# ==========================================
+with app.app_context():
+    db.create_all()
+    if not FatorEmergia.query.first():
+        fatores_iniciais = [
+            FatorEmergia(material_energia="Bateria de Íon-Lítio", transformidade=1.75e13, unidade="sej/g"),
+            FatorEmergia(material_energia="Cobre (Motor)", transformidade=7.30e12, unidade="sej/g"),
+            FatorEmergia(material_energia="Eletricidade (Rede)", transformidade=1.60e5, unidade="sej/J")
+        ]
+        
+        db.session.bulk_save_objects(fatores_iniciais)
+        db.session.commit()
+
+
+# ==========================================
+# ROTA SECRETA TEMPORÁRIA PARA VIRAR ADMIN
+# ==========================================
+@app.route('/virar-admin-aps-2026')
+def virar_admin():
+    user = Usuario.query.filter_by(email='admin@emergia.com').first()
+    if user:
+        user.perfil = 'admin'
+        db.session.commit()
+        return "<h1>Sucesso! O usuário admin@emergia.com agora é ADMINISTRADOR.</h1>"
+    return "<h1>Erro: Usuário não encontrado no banco de dados.</h1>"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
