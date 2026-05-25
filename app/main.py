@@ -70,16 +70,6 @@ with app.app_context():
             FatorEmergia(material_energia="Cobre (Motor)", transformidade=7.30e12, unidade="sej/g"),
             FatorEmergia(material_energia="Eletricidade (Rede)", transformidade=1.60e5, unidade="sej/J")
         ]
-    admin_existente = Usuario.query.filter_by(email='admin@emergia.com').first()
-    if not admin_existente:
-        # Cria a senha criptografada idêntica ao seu sistema
-        senha_cripto = bcrypt.generate_password_hash('unip123').decode('utf-8')
-        usuario_admin = Usuario(
-            nome="Administrador APS",
-            email="admin@emergia.com",
-            senha_hash=senha_cripto,
-            perfil="admin"  # <--- Aqui define como admin
-        )
         
         db.session.bulk_save_objects(fatores_iniciais)
         db.session.commit()
